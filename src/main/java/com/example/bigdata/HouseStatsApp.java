@@ -8,9 +8,8 @@ import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class HouseStatsApp {
@@ -49,9 +48,9 @@ public class HouseStatsApp {
         // setting offset reset to earliest so that we can re-run the code with the same pre-loaded data
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        final Serde<InputScores> inputScoresSerde = new JsonPOJOSerde<>(InputScores.class);
-        final Serde<HouseStatsState> houseStatsStateSerde = new JsonPOJOSerde<>(HouseStatsState.class);
-        final Serde<HouseStats> houseStatsSerde = new JsonPOJOSerde<>(HouseStats.class);
+        final Serde<InputScores> inputScoresSerde = new JsonPOJOSerde<>(InputScores.class, false);
+        final Serde<HouseStatsState> houseStatsStateSerde = new JsonPOJOSerde<>(HouseStatsState.class, false);
+        final Serde<HouseStats> houseStatsSerde = new JsonPOJOSerde<>(HouseStats.class, true);
 
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, InputScores> scores = builder.stream("kafka-input",
@@ -67,7 +66,7 @@ public class HouseStatsApp {
                         Materialized.with(Serdes.String(), houseStatsStateSerde)
                 );
         KStream<String, HouseStats> resultStream = stats.toStream().
-                        map(
+                map(
                         (key, value) -> {
                             HouseStats finalStats = new HouseStats();
                             finalStats.house = value.house;
@@ -99,3 +98,4 @@ public class HouseStatsApp {
         System.exit(0);
     }
 }
+

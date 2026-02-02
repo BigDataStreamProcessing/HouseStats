@@ -9,9 +9,11 @@ import java.util.Map;
 
 public class JsonPOJOSerde<T> implements Serde<T> {
     private final Class<T> tClass;
+    private final boolean includeSchema;
 
-    public JsonPOJOSerde(Class<T> cls) {
+    public JsonPOJOSerde(Class<T> cls, boolean includeSchema) {
         this.tClass = cls;
+        this.includeSchema = includeSchema;
     }
 
     @Override
@@ -19,6 +21,7 @@ public class JsonPOJOSerde<T> implements Serde<T> {
         Map<String, Object> serdeProps = new HashMap<>();
         final Serializer<T> s = new JsonPOJOSerializer<T>();
         serdeProps.put("JsonPOJOClass", tClass);
+        serdeProps.put("include.schema", includeSchema);
         s.configure(serdeProps, false);
         return s;
     }
