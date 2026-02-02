@@ -40,13 +40,12 @@ public class HouseStatsApp {
     }
 
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Two parameters are required: boostrapServer windowDurationSeconds");
+        if (args.length < 1) {
+            System.out.println("Two parameters are required: boostrapServer");
             System.exit(0);
         }
         final String boostrapServer = args[0];
-        final int windowDuration = Integer.parseInt(args[1]);
-        
+
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "house-stats-app");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, boostrapServer);
@@ -61,8 +60,7 @@ public class HouseStatsApp {
         KStream<String, InputScores> scores = builder.stream("kafka-input",
                 Consumed.with(Serdes.String(), inputScoresSerde));
 
-        KTable<Windowed<String>, HouseStatsState> stats = scores.groupByKey().
-                windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(windowDuration))).
+        KTable<String, HouseStatsState> stats = scores.groupByKey().
                 aggregate(
                         HouseStatsState::new,
                         (aggKey, newValue, aggValue) -> {
@@ -79,9 +77,7 @@ public class HouseStatsApp {
                             finalStats.how_many = value.how_many;
                             finalStats.sum_score = value.sum_score;
                             finalStats.no_characters = value.characters.size();
-                            finalStats.start_ts = key.window().startTime().toString();
-                            finalStats.end_ts = key.window().endTime().toString();
-                            return KeyValue.pair(key.key(), finalStats);
+                            return KeyValue.pair(key, finalStats);
                         }
                 );
         // write to the result topic
