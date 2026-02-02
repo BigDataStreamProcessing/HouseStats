@@ -8,7 +8,6 @@ import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -28,8 +27,6 @@ public class HouseStatsApp {
         public long how_many;
         public long sum_score;
         public long no_characters;
-        public String start_ts;
-        public String end_ts;
     }
 
     static public class HouseStatsState {
