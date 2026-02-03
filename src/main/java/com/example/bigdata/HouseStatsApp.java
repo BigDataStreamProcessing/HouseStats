@@ -50,7 +50,7 @@ public class HouseStatsApp {
 
         final Serde<InputScores> inputScoresSerde = new JsonPOJOSerde<>(InputScores.class, false);
         final Serde<HouseStatsState> houseStatsStateSerde = new JsonPOJOSerde<>(HouseStatsState.class, false);
-        final Serde<HouseStats> houseStatsSerde = new JsonPOJOSerde<>(HouseStats.class, true);
+        final Serde<HouseStats> houseStatsSerde = new JsonPOJOSerde<>(HouseStats.class, false);
 
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, InputScores> scores = builder.stream("kafka-input",
