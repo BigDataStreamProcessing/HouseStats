@@ -3,11 +3,8 @@ package com.example.bigdata;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.*;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -78,7 +75,10 @@ public class HouseStatsApp {
                 );
         // write to the result topic
         resultStream.to("kafka-output", Produced.with(Serdes.String(), houseStatsSerde));
-        try (KafkaStreams streams = new KafkaStreams(builder.build(), props)) {
+
+        Topology topology = builder.build();
+
+        try (KafkaStreams streams = new KafkaStreams(topology, props)) {
             final CountDownLatch latch = new CountDownLatch(1);
             // attach shutdown handler to catch control-c
             Runtime.getRuntime().addShutdownHook(new Thread("streams-pipe-shutdown-hook") {

@@ -23,6 +23,10 @@ public class JsonPOJOSerializer<T> implements Serializer<T> {
      * Default constructor needed by Kafka
      */
     public JsonPOJOSerializer() {
+        // aby obsługiwać Instant, LocalDate itp.
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+        // Wyłącz zapisywanie dat jako liczby (timestamps), aby dostać format ISO-8601
+        objectMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Override
@@ -79,6 +83,7 @@ public class JsonPOJOSerializer<T> implements Serializer<T> {
                 case "double":
                 case "float":   fieldMap.put("type", "double"); break;
                 case "boolean": fieldMap.put("type", "boolean"); break;
+                // case "instant": fieldMap.put("type", "string"); break; // the same as default
                 default:        fieldMap.put("type", "string"); break;
             }
             fields.add(fieldMap);
