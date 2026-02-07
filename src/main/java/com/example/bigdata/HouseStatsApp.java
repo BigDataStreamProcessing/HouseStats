@@ -79,6 +79,9 @@ public class HouseStatsApp {
         Topology topology = builder.build();
 
         try (KafkaStreams streams = new KafkaStreams(topology, props)) {
+            streams.setStateListener((newState, oldState) -> {
+                System.out.println("ZMIANA STANU: " + oldState + " -> " + newState);
+            });
             final CountDownLatch latch = new CountDownLatch(1);
             // attach shutdown handler to catch control-c
             Runtime.getRuntime().addShutdownHook(new Thread("streams-pipe-shutdown-hook") {
