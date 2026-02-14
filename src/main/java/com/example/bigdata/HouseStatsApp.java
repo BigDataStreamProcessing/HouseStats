@@ -34,7 +34,7 @@ public class HouseStatsApp {
 
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Two parameters are required: boostrapServer");
+            System.out.println("One parameter is required: boostrapServer");
             System.exit(0);
         }
         final String boostrapServer = args[0];
